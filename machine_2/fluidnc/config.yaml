@@ -1,0 +1,214 @@
+board: MKC DLC32 Max
+name: MKC DLC32 Max Default
+meta:
+stepping:
+  engine: Timed
+  idle_ms: 255
+  pulse_us: 4
+  dir_delay_us: 0
+  disable_delay_us: 0
+  segments: 12
+
+spi:
+  miso_pin: gpio.12
+  mosi_pin: gpio.14
+  sck_pin: gpio.13
+
+# Uncomment if you want an SD card, the pins are correct.
+# sdcard:
+#   cs_pin: gpio.21
+#   card_detect_pin: gpio.10
+#   frequency_hz: 8000000
+
+kinematics:
+  Cartesian:
+
+axes:
+  shared_stepper_disable_pin: gpio.8
+  homing_runs: 2
+  x:
+    steps_per_mm: 320
+    # 3000 also works here, but it is spooky.
+    max_rate_mm_per_min: 2000
+    acceleration_mm_per_sec2: 75
+    # Measured distance switch to switch was: 273.791
+    max_travel_mm: 270
+    soft_limits: true
+    motor0:
+      # `:high` means we use normally-closed limit switch wiring.
+      limit_all_pin: gpio.39:high
+      # This must be set to true to actually stop when a limit switch is hit. Why is it not the default?
+      hard_limits: true
+      pulloff_mm: 3
+      standard_stepper:
+        step_pin: gpio.16
+        # Add `:low` after the pin name to invert the direction, compared to the default `:high`.
+        direction_pin: gpio.15
+    homing:
+      # See comments on axis Z below.
+      cycle: 2
+      allow_single_axis: true
+      positive_direction: false
+      mpos_mm: -135
+      seek_mm_per_min: 500.000000
+      feed_mm_per_min: 100.000000
+      settle_ms: 250
+
+  y:
+    steps_per_mm: 320
+    max_rate_mm_per_min: 2000
+    acceleration_mm_per_sec2: 75
+    max_travel_mm: 200
+    soft_limits: true
+    motor0:
+      limit_all_pin: gpio.40:high
+      hard_limits: true
+      pulloff_mm: 3
+      standard_stepper:
+        step_pin: gpio.7
+        direction_pin: gpio.6:low
+    homing:
+      # Home Y separately from X to hopefully avoid bug: https://github.com/bdring/FluidNC/issues/1738
+      cycle: 3
+      allow_single_axis: true
+      positive_direction: true
+      mpos_mm: 100
+      seek_mm_per_min: 500.000000
+      feed_mm_per_min: 100.000000
+      settle_ms: 250
+
+  z:
+    steps_per_mm: 320
+    max_rate_mm_per_min: 1000
+    acceleration_mm_per_sec2: 25
+    max_travel_mm: 180
+    soft_limits: true
+    motor0:
+      limit_all_pin: gpio.41:high
+      hard_limits: true
+      pulloff_mm: 3
+      standard_stepper:
+        step_pin: gpio.5
+        direction_pin: gpio.4
+    homing:
+      # In what order to home this, relative to other axes.
+      cycle: 1
+      # Enable the "home only this axis" command. Why not, I guess.
+      allow_single_axis: true
+      # Which way to home.
+      positive_direction: true
+      # Set the position value to this after homing.
+      # It's tempting to set it for Z so that 0 is the lowest position, but that makes the "go to zero" command dangerous, so no.
+      mpos_mm: 0
+      # Movement speed during the first pass.
+      seek_mm_per_min: 500.000000
+      # Movement speed during the second pass.
+      feed_mm_per_min: 100.000000
+      # Pause between the two passes.
+      settle_ms: 250
+
+  # a:
+  #   steps_per_mm: 320
+  #   max_rate_mm_per_min: 1000.000000
+  #   acceleration_mm_per_sec2: 25.000000
+  #   max_travel_mm: 1000.000000
+  #   soft_limits: false
+  #   motor0:
+  #     limit_neg_pin: gpio.48:low
+  #     limit_pos_pin: NO_PIN
+  #     limit_all_pin: NO_PIN
+  #     hard_limits: false
+  #     pulloff_mm: 1.000000
+  #     standard_stepper:
+  #       step_pin: gpio.20
+  #       direction_pin: gpio.19
+
+
+control:
+  # safety_door_pin: gpio.38:low
+  safety_door_pin: NO_PIN
+  reset_pin: NO_PIN
+  feed_hold_pin: NO_PIN
+  cycle_start_pin: NO_PIN
+  macro0_pin: NO_PIN
+  macro1_pin: NO_PIN
+  macro2_pin: NO_PIN
+  macro3_pin: NO_PIN
+  fault_pin: NO_PIN
+  estop_pin: NO_PIN
+  homing_button_pin: NO_PIN
+
+coolant:
+  # Labeled Air
+  flood_pin: gpio.1
+  # Beeper
+  # mist_pin: gpio.42
+  delay_ms: 0
+
+# probe:
+#   pin: gpio.37
+#   toolsetter_pin: NO_PIN
+#   check_mode_start: true
+#   hard_stop: false
+
+macros:
+  startup_line0:
+  startup_line1:
+  Macro0:
+  Macro1:
+  Macro2:
+  Macro3:
+  after_homing:
+  after_reset:
+  after_unlock:
+
+pwm:
+  pwm_hz: 5000
+  direction_pin: NO_PIN
+  output_pin: gpio.2
+  enable_pin: gpio.42
+  disable_with_s0: false
+  s0_with_disable: false
+  spinup_ms: 0
+  spindown_ms: 0
+  tool_num: 0
+  speed_map: 0=0.000% 24000=100%
+  off_on_alarm: false
+
+# pwm:
+#   pwm_hz: 5000
+#   direction_pin: NO_PIN
+#   output_pin: gpio.35
+#   enable_pin: NO_PIN
+#   disable_with_s0: false
+#   s0_with_disable: true
+#   spinup_ms: 0
+#   spindown_ms: 0
+#   tool_num: 1
+#   speed_map: 0=0.000% 24000=84.378%
+#   off_on_alarm: false
+
+start:
+  must_home: false
+  deactivate_parking: false
+  check_limits: true
+
+arc_tolerance_mm: 0.002000
+junction_deviation_mm: 0.010000
+verbose_errors: true
+report_inches: false
+enable_parking_override_control: false
+use_line_numbers: false
+planner_blocks: 16
+
+
+# UART. The pins seem correct.
+# uart1:
+#   txd_pin: gpio.17
+#   rxd_pin: gpio.18
+#   baud: 1000000
+#   mode: 8N1
+
+# uart_channel1:
+#   report_interval_ms: 75
+#   uart_num: 1
