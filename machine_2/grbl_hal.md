@@ -97,14 +97,26 @@ $3=2
 $100=320
 $101=320
 $102=320
+
 ; Max speed, mm/min XYZ
-$110=2000
-$111=2000
-$112=1000
+$110=6000
+$111=6000
+$112=3000
 ; Acceleration, mm/sec^2 XYZ
-$120=75
-$121=75
-$122=25
+$120=300
+$121=300
+$122=150
+
+; More conservative options:
+; ; Max speed, mm/min XYZ
+; $110=2000
+; $111=2000
+; $112=1000
+; ; Acceleration, mm/sec^2 XYZ
+; $120=150
+; $121=150
+; $122=75
+
 ; Max travel, mm
 ; Note that you must add $27 pulloff distance to those. And if bit +8 in $22 is NOT set, add $27 AGAIN.
 ; The true range of the machine is 270x200x180
