@@ -106,7 +106,7 @@ Set:
 
   * Enable Parallel Step Back to mill each line again when moving back (instead of raising the mill and moving over the top), thich results in better finish and shouldn't slow the operation down much if at all.
 
-  * Enable Stay Low (if possible), this seems to produce shorter gcode.
+  * **Important:** Enabling `Stay Low (if possible)` seems to produce shorter gcode, but it can bug out and travel through your model. Check in the simulation.
 
 * In the Operation G-code tab:
 
