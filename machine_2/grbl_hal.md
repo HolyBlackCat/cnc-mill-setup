@@ -174,3 +174,6 @@ You also need `$73=1` (wifi mode = "station", aka connect to an existing network
 
 Then to get the IP address, run `$I` and look for `STA IP`.
 ```
+Probe:
+
+* To invert the probe pin, set `$6=1`. This depends on the probe. On my probe this is needed.
