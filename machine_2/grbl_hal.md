@@ -32,7 +32,7 @@ git submodule update --recursive --init
 
 Must install this, otherwise `./install.sh` below will complain: (`virtualenv` isn't the same thing as `venv`)
 ```sh
-pacman -S python-virtualenv
+pacman -S --needed python-virtualenv
 ```
 
 Lastly, install the SDK:
@@ -51,36 +51,44 @@ cd ..
 
 Clone grblHAL for ESP32. This includes the `grblHAL/core` as a submodule.
 
-This guide was tested on commit: c07026a885d9b0c2d34b8afd99baf3c748ee6699
+This guide was tested on a specific commit provided below.
 
 ```sh
-git clone --recursive --shallow-submodules https://github.com/grblHAL/ESP32
+git clone https://github.com/grblHAL/ESP32
 cd ESP32
+git checkout c07026a885d9b0c2d34b8afd99baf3c748ee6699
+git submodule update --recursive --init
 ```
 
 Patch `main/my_machine.h`:
 * Uncomment: `#define BOARD_MKS_DLC32_MAX_V1`.
-* Uncomment: `HOMING_PULLOFF_ENABLE`, `WEBUI_ENABLE`, `PROBE_ENABLE 0` (must uncomment to disable the probe, it defaults to enabled).
+* Uncomment: `HOMING_PULLOFF_ENABLE`, `WEBUI_ENABLE`.
+* If you have no probe, uncomment `PROBE_ENABLE 0` (uncommenting disables the probe, it defaults to enabled).
 * Add: `#define SPINDLE0_ENABLE SPINDLE_PWM0_NODIR`.
 
 Patch `main/boards/mks_dlc32_max_1_0_map.h` for our board:
 * Comment out the pin that we reuse for "spindle enable": `// #define COOLANT_MIST_PIN        AUXOUTPUT3_PIN //Beeper header`
-* Change `#define SPINDLE_ENABLE_PIN` to `AUXOUTPUT3_PIN` to use the beeper pin.
-* Comment out: `CYCLE_START_PIN`, `LED_PIN`, `PROBE_PIN`, `SAFETY_DOOR_PIN`.
+* Change `#define SPINDLE_ENABLE_PIN` to `AUXOUTPUT3_PIN // Beeper pin` to use the beeper pin.
+* Comment out: `CYCLE_START_PIN`, `LED_PIN`, `SAFETY_DOOR_PIN`.
+* If you have no probe, comment out `PROBE_PIN`.
 
 Build:
 
 ```sh
 rm -rf build
+export CMAKE_POLICY_VERSION_MINIMUM=3.5
 # You can list available targets with `idf.py --list-targets`
 idf.py set-target esp32s3
 idf.py build
-rm -rf build
 ```
+
+Flash using `idf.py -p /dev/ttyUSB0 flash` (you may need to specify a different device).
 
 ## Runtime configuration of grblHAL
 
-Boot the board, connect via Universal GCode Sender.
+Boot the board, connect via any gcode sender (the good ones are: gSender, Universal GCode Sender)
+
+If you're updating the firmware, then the old settings should be preserved.
 
 Set settings:
 
